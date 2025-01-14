@@ -5,13 +5,14 @@ import { sleep } from "./sleep";
 export function Users() {
 
     const {data, isLoading, isFetching, refetch} = useQuery({
-        enabled: false,
+        enabled: true,
         queryKey: ['users'],
         queryFn: async (): Promise<IUser[]> => {
             await sleep()
             const response = await fetch("http://localhost:3333/users")
             return response.json()
-        }
+        },
+        staleTime: 5000,
     });
 
     /* sobre os estados de consulta do react query
