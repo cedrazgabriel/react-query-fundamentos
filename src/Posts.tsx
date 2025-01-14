@@ -11,7 +11,6 @@ export function Posts() {
             const response = await fetch("http://localhost:3333/users")
             return response.json()
         },
-        staleTime: 5000,
     });
 return (
    <pre>

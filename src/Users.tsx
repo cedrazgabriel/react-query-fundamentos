@@ -12,7 +12,7 @@ export function Users() {
             const response = await fetch("http://localhost:3333/users")
             return response.json()
         },
-        staleTime: 5000,
+        
     });
 
     /* sobre os estados de consulta do react query
