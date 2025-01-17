@@ -16,16 +16,24 @@ export function Users() {
     const [email, setEmail] = useState('')
 
     const { mutate } = useMutation({
-        mutationFn: async () => {
-            console.log('mutation fn executada')
+        mutationFn: async (variables: { name: string, email: string }) => {
+            console.log('mutation fn executada', variables)
         }
     })
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        console.log({ name, email })
-        mutate()
+        const elements = event.currentTarget.elements as typeof event.currentTarget.elements & {
+            name: HTMLInputElement,
+            email: HTMLInputElement
+        }
+
+        console.log(elements.name.value, elements.email.value)
+        mutate({
+            name: elements.name.value,
+            email: elements.email.value
+        })
     }
 
     return (
