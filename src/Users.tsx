@@ -17,7 +17,7 @@ export function Users() {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
 
-    const { mutate, isPending } = useMutation({
+    const { mutateAsync, isPending } = useMutation({
         mutationFn: async ({name, email}: { name: string, email: string }) : Promise<IUser> => {
             await sleep(2000)
             const response = await fetch('http://localhost:3333/users', {
@@ -54,7 +54,7 @@ export function Users() {
             email: HTMLInputElement
         }
 
-        mutate({
+        const data = mutateAsync({
             name: elements.name.value,
             email: elements.email.value
         })
