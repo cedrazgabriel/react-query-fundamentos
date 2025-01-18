@@ -45,6 +45,7 @@ export function Users() {
                         type="text"
                         placeholder="Nome"
                         value={name}
+                        name="name"
                         onChange={e => setName(e.target.value)}
                     />
                     <input
@@ -52,6 +53,7 @@ export function Users() {
                         type="text"
                         placeholder="Email"
                         value={email}
+                        name="email"
                         onChange={e => setEmail(e.target.value)}
                     />
 
