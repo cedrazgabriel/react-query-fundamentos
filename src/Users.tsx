@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useUsers } from "./hooks/useUsers";
 import { useMutation } from "@tanstack/react-query";
 import { IUser } from "./types";
+import { sleep } from "./sleep";
 
 export function Users() {
 
@@ -16,9 +17,10 @@ export function Users() {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
 
-    const { mutate } = useMutation({
+    const { mutate, isPending } = useMutation({
         mutationFn: async ({name, email}: { name: string, email: string }) : Promise<IUser> => {
-           const response = await fetch('http://localhost3333/users', {
+            await sleep(2000)
+            const response = await fetch('http://localhost:3333/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -30,8 +32,19 @@ export function Users() {
            })
 
            return  response.json()
+        },
+        onError: (error, variables) => {
+            console.log({error, variables})
+        },
+        onSuccess: (data, variables) => {
+            console.log('on success',{data, variables})
+        },
+        //Executa sempre ao final do onSuccess, ou onError (mesma coisa que o finally)
+        onSettled: (data, error, variables) => {
+            console.log('on settled', {data, error, variables})
         }
     })
+
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -41,7 +54,6 @@ export function Users() {
             email: HTMLInputElement
         }
 
-        console.log(elements.name.value, elements.email.value)
         mutate({
             name: elements.name.value,
             email: elements.email.value
@@ -70,7 +82,7 @@ export function Users() {
                     />
 
                     <button className="bg-blue-400 py-2 text-zinc-950 rounded-md">
-                        Cadastrar
+                        {isPending ? 'Cadastrando...' : 'Cadastrar'}
                     </button>
                 </form>
             </div>
