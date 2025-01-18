@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useUsers } from "./hooks/useUsers";
 import { useMutation } from "@tanstack/react-query";
+import { IUser } from "./types";
 
 export function Users() {
 
@@ -16,8 +17,19 @@ export function Users() {
     const [email, setEmail] = useState('')
 
     const { mutate } = useMutation({
-        mutationFn: async (variables: { name: string, email: string }) => {
-            console.log('mutation fn executada', variables)
+        mutationFn: async ({name, email}: { name: string, email: string }) : Promise<IUser> => {
+           const response = await fetch('http://localhost3333/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name,
+                email
+            })
+           })
+
+           return  response.json()
         }
     })
 
