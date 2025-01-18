@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useUsers } from "./hooks/useUsers";
-import { useMutation } from "@tanstack/react-query";
-import { IUser } from "./types";
-import { sleep } from "./sleep";
+import { useCreateUser } from "./hooks/useCreateUser";
 
 export function Users() {
 
-    const { users, isLoading, isFetching, refetch } = useUsers()
+    const { users,  isLoading : isLoadingUser, isFetching, refetch } = useUsers()
 
     /* sobre os estados de consulta do react query
     isPending(bool): true quando não houver nenhum valor no cache
@@ -17,33 +15,7 @@ export function Users() {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
 
-    const { mutateAsync, isPending } = useMutation({
-        mutationFn: async ({name, email}: { name: string, email: string }) : Promise<IUser> => {
-            await sleep(2000)
-            const response = await fetch('http://localhost:3333/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name,
-                email
-            })
-           })
-
-           return  response.json()
-        },
-        onError: (error, variables) => {
-            console.log({error, variables})
-        },
-        onSuccess: (data, variables) => {
-            console.log('on success',{data, variables})
-        },
-        //Executa sempre ao final do onSuccess, ou onError (mesma coisa que o finally)
-        onSettled: (data, error, variables) => {
-            console.log('on settled', {data, error, variables})
-        }
-    })
+   const {createUser, isLoading} = useCreateUser();
 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -54,10 +26,12 @@ export function Users() {
             email: HTMLInputElement
         }
 
-        const data = mutateAsync({
+        const data = createUser({
             name: elements.name.value,
             email: elements.email.value
         })
+
+        console.log(data)
     }
 
     return (
@@ -82,7 +56,7 @@ export function Users() {
                     />
 
                     <button className="bg-blue-400 py-2 text-zinc-950 rounded-md">
-                        {isPending ? 'Cadastrando...' : 'Cadastrar'}
+                        {isLoading ? 'Cadastrando...' : 'Cadastrar'}
                     </button>
                 </form>
             </div>
@@ -93,8 +67,8 @@ export function Users() {
             >
                 Listar usuários
             </button>
-            {isLoading && <h1>Carregando..</h1>}
-            {!isLoading && isFetching && <small>Fetching..</small>}
+            {isLoadingUser && <h1>Carregando..</h1>}
+            {!isLoadingUser && isFetching && <small>Fetching..</small>}
             {users.map(user => (
                 <div key={user.id}>
                     <strong className='block'>{user.name}</strong>
